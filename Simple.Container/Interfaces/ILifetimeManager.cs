@@ -10,6 +10,7 @@ namespace Simple.Container
 		/// <summary>
 		/// Resolves dependency
 		/// </summary>
+		/// <param name="container">IoC container, used to resolve autowiring</param>
 		/// <param name="keepTrackObject">if true, container should keep track over dependecy lifetime, and release them before its own destruction</param>
 		/// <returns>Resolved dependency</returns>
 		object Resolve(SimpleContainer container, out bool keepTrackObject);

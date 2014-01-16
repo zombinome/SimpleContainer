@@ -1,15 +1,23 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 
 namespace Simple.Container
 {
 	public class InstanceLifetimeManager: ILifetimeManager
 	{
+		/// <summary>
+		/// Dependecy type
+		/// </summary>
 		protected readonly Type type;
 
+		/// <summary>
+		/// True, if dependency implements IDisposable interface
+		/// </summary>
 		protected readonly bool isDisposable;
 
+		/// <summary>
+		/// Type constructor info
+		/// </summary>
 		protected readonly ConstructorInfo constructor = null;
 
 		public InstanceLifetimeManager(Type actualType)
@@ -45,6 +53,10 @@ namespace Simple.Container
 			return TypeHelper.CreateInstance(container, this.constructor);
 		}
 
+		/// <summary>
+		/// Releases dependency, disposing object if needed
+		/// </summary>
+		/// <param name="dependency">Dependecy to release</param>
 		public virtual void Release(object dependency)
 		{
 			if (dependency.GetType() == this.type && this.isDisposable)

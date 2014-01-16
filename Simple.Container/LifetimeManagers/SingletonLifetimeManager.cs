@@ -2,7 +2,7 @@
 {
 	public class SingletonLifetimeManager: ILifetimeManager
 	{
-		private object instance;
+		protected object instance;
 
 		#region Implementation of IDisposable
 
@@ -23,7 +23,13 @@
 			this.instance = instanceToKeep;
 		}
 
-		public object Resolve(out bool keepTrackObject)
+		/// <summary>
+		/// Resolves dependency
+		/// </summary>
+		/// <param name="container">IoC container, used to resolve autowiring</param>
+		/// <param name="keepTrackObject">if true, container should keep track over dependecy lifetime, and release them before its own destruction</param>
+		/// <returns>Resolved dependency</returns>
+		public object Resolve(SimpleContainer container, out bool keepTrackObject)
 		{
 			keepTrackObject = false;
 			return this.instance;
@@ -32,11 +38,6 @@
 		public void Release(object dependency)
 		{
 		}
-
-		/// <summary>
-		/// Owner of this lifetime manager
-		/// </summary>
-		public SimpleContainer Container { get; internal set; }
 
 		#endregion
 	}

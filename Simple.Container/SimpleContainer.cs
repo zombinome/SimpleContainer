@@ -75,24 +75,24 @@ namespace Simple.Container
 			try
 			{
 				object result;
-				if (ResolveExact(this.registeredLifetimeManagers, this.dependenciesToRelease, dependecyType, name, out result))
+				if (ResolveExact(this, this.dependenciesToRelease, dependecyType, name, out result))
 				{
 					return result;
 				}
 
-				if (ResolveDerived(this.registeredLifetimeManagers, this.dependenciesToRelease, dependecyType, name, out result))
+				if (ResolveDerived(this, this.dependenciesToRelease, dependecyType, name, out result))
 				{
 					return result;
 				}
 
 				if (this.parentContainer != null)
 				{
-					if (ResolveExact(this.parentContainer.registeredLifetimeManagers, this.dependenciesToRelease, dependecyType, name, out result))
+					if (ResolveExact(this.parentContainer, this.dependenciesToRelease, dependecyType, name, out result))
 					{
 						return result;
 					}
 
-					if (ResolveDerived(this.parentContainer.registeredLifetimeManagers, this.parentContainer.dependenciesToRelease, dependecyType, name, out result))
+					if (ResolveDerived(this.parentContainer, this.parentContainer.dependenciesToRelease, dependecyType, name, out result))
 					{
 						return result;
 					}
@@ -163,13 +163,16 @@ namespace Simple.Container
 		}
 
 		protected static bool ResolveExact(
-			Dictionary<Type, Dictionary<string, ILifetimeManager>> registeredLifetimeManagers, 
+			SimpleContainer container,
+			//Dictionary<Type, Dictionary<string, ILifetimeManager>> registeredLifetimeManagers, 
 			Dictionary<object, ILifetimeManager> dependenciesToRelease, 
 			Type dependencyType, 
 			string name, 
 			out object result)
 		{
 			result = null;
+
+			var registeredLifetimeManagers = container.registeredLifetimeManagers;
 
 			// trying exact match
 			if (registeredLifetimeManagers.ContainsKey(dependencyType))
@@ -189,7 +192,7 @@ namespace Simple.Container
 				if (lifetimeManager != null)
 				{
 					bool keepTrack;
-					result = lifetimeManager.Resolve(out keepTrack);
+					result = lifetimeManager.Resolve(container, out keepTrack);
 					if (keepTrack)
 					{
 						dependenciesToRelease[result] = lifetimeManager;
@@ -203,13 +206,15 @@ namespace Simple.Container
 		}
 
 		protected static bool ResolveDerived(
-			Dictionary<Type, Dictionary<string, ILifetimeManager>> registeredLifetimeManagers,
+			SimpleContainer container,
+			//Dictionary<Type, Dictionary<string, ILifetimeManager>> registeredLifetimeManagers,
 			Dictionary<object, ILifetimeManager> dependenciesToRelease,
 			Type dependencyType,
 			string name,
 			out object result)
 		{
 			result = null;
+			var registeredLifetimeManagers = container.registeredLifetimeManagers;
 
 			// trying to resolve nearest derived type
 			foreach (var registeredLifetimeManager in registeredLifetimeManagers)
@@ -217,7 +222,7 @@ namespace Simple.Container
 				Type registeredType = registeredLifetimeManager.Key;
 				if (dependencyType.IsAssignableFrom(registeredType))
 				{
-					return ResolveExact(registeredLifetimeManagers, dependenciesToRelease, registeredType, name, out result);
+					return ResolveExact(container, dependenciesToRelease, registeredType, name, out result);
 				}
 			}
 
