@@ -36,5 +36,18 @@ namespace Simple.Container
 			container.Register(typeof (TMappedType), typeof (TActualType), lifetimeManager, name);
 			return container;
 		}
+
+		public static SimpleContainer RegisterType<TDepenedcy>(this SimpleContainer container, string name = null)
+		{
+			ILifetimeManager lifetimeManager = new InstanceLifetimeManager(typeof(TDepenedcy));
+
+			container.Register(typeof(TDepenedcy), typeof(TDepenedcy), lifetimeManager, name);
+			return container;
+		}
+
+		public static TDependency Resolve<TDependency>(this SimpleContainer container)
+		{
+			return (TDependency)container.Resolve(typeof (TDependency));
+		}
 	}
 }

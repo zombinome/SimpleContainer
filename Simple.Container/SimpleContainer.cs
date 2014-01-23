@@ -127,7 +127,7 @@ namespace Simple.Container
 		/// Creates child IoC container. Child container inherits all parent rules, but all object resolved through child container should
 		/// </summary>
 		/// <returns></returns>
-		public SimpleContainer CreateChildContainer()
+		public virtual SimpleContainer CreateChildContainer()
 		{
 			return new SimpleContainer(this);
 		}
